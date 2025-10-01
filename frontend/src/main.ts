@@ -1,43 +1,37 @@
-import PouchDB from 'pouchdb';
+import Note from './note';
 import utils from './shared/utils';
-const db = new PouchDB('test');
-// const remoteCouch = false;
 
-interface todoDoc {
-	_id: string;
-	title: string;
-	completed: boolean;
-}
-
-function addTodo(text: string) {
-	const todo: todoDoc = {
-		_id: new Date().toISOString(),
-		title: text,
-		completed: false,
-	};
-	db.put(todo)
-		.then(() => {console.log("doc envoyé")})
-		.catch((err) => {console.log("ERROR", err)});
-}
-
-function showTodos() {
-	db.allDocs<todoDoc>({ include_docs: true, descending: true })
-	.then((doc) => {
-		console.log(doc)
-		var logs = document.querySelector('#logs');
-		if (logs) {
-			let res = '';
-			doc.rows.forEach(r => res += `${r.doc?._id} ${r.doc?.title}<br />`)
-			logs.innerHTML = res;
-		}
-	});
-}
+import dbStore from './store/db'
 
 var app = document.querySelector('#app');
 if (app) {
-	let d = (app as HTMLElement);
+	let d = app as HTMLElement;
 
-	d.appendChild(utils.createButton('Add', '',() => {addTodo('Super test');}));
-	d.appendChild(utils.createButton('Show', '',() => {showTodos();}));
+	d.appendChild(
+		utils.createButton('Add', '', () => {
+			dbStore.addNote('Super test');
+		}),
+	);
+	d.appendChild(
+		utils.createButton('Show', '', async () => {
+			let n = await dbStore.getAllNotes();
+			console.log("notes", n);
+			var logs = document.querySelector('#logs');
+			if (logs) {
+				n.rows.forEach(
+					(r) => {
+						if(r.doc) {
+							let _ = new Note(r.doc);
+							logs?.appendChild(_.getHtml());
+						}
+					},
+				);
+			}
+		}),
+	);
+	d.appendChild(
+		utils.createButton('Sync', '', () => {
+			dbStore.sync();
+		}),
+	);
 }
-
