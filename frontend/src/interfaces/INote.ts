@@ -3,5 +3,6 @@ export interface INote {
 	title: string;
     content: string;
     creationDate: Date;
+    lastUpdateDate: Date;
 }
 

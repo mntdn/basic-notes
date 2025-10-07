@@ -1,16 +1,20 @@
 import PouchDB from 'pouchdb';
 import configJson from '../config/config.json';
 import { INote } from '../interfaces/INote';
+import utils from '../shared/utils';
 
 const db = new PouchDB('notes');
 const remoteDb = new PouchDB(configJson.remoteDbAddress);
 
+console.log("INIT DB");
+
 function addNote(text: string) {
 	const todo: INote = {
-		_id: new Date().toISOString(),
+		_id: `${utils.guid()}-${new Date().getHours()}${new Date().getMinutes()}${new Date().getSeconds()}${new Date().getMilliseconds()}`,
 		title: text,
 		content: '',
 		creationDate: new Date(),
+		lastUpdateDate: new Date(),
 	};
 	db.put(todo)
 		.then(() => {
@@ -25,6 +29,7 @@ async function updateNote(id: string, content: string) {
 	let doc = await db.get<INote>(id);
 
 	doc.content = content;
+    doc.lastUpdateDate = new Date();
 	await db.put(doc);
 }
 

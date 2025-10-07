@@ -1,7 +1,7 @@
 import Note from './note';
 import utils from './shared/utils';
-
 import dbStore from './store/db'
+import uiStore from './store/ui'
 
 var app = document.querySelector('#app');
 if (app) {
@@ -22,7 +22,8 @@ if (app) {
 					(r) => {
 						if(r.doc) {
 							let _ = new Note(r.doc);
-							logs?.appendChild(_.getHtml());
+							logs?.appendChild(_.getElementHtml());
+							uiStore.addElement(_);
 						}
 					},
 				);
@@ -32,6 +33,11 @@ if (app) {
 	d.appendChild(
 		utils.createButton('Sync', '', () => {
 			dbStore.sync();
+		}),
+	);
+	d.appendChild(
+		utils.createButton('Update', '', () => {
+			uiStore.updateAll();
 		}),
 	);
 }
