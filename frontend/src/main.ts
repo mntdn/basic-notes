@@ -1,11 +1,13 @@
 import Note from './note';
 import utils from './shared/utils';
+import './style/main.scss';
 import dbStore from './store/db'
 import uiStore from './store/ui'
 
 var app = document.querySelector('#app');
-if (app) {
-	let d = app as HTMLElement;
+var menu = document.querySelector('#menu');
+if (menu && app) {
+	let d = menu as HTMLElement;
 
 	d.appendChild(
 		utils.createButton('Add', '', () => {
@@ -16,18 +18,15 @@ if (app) {
 		utils.createButton('Show', '', async () => {
 			let n = await dbStore.getAllNotes();
 			console.log("notes", n);
-			var logs = document.querySelector('#logs');
-			if (logs) {
-				n.rows.forEach(
-					(r) => {
-						if(r.doc) {
-							let _ = new Note(r.doc);
-							logs?.appendChild(_.getElementHtml());
-							uiStore.addElement(_);
-						}
-					},
-				);
-			}
+			n.rows.forEach(
+				(r) => {
+					if(r.doc) {
+						let _ = new Note(r.doc);
+						app?.appendChild(_.getElementHtml());
+						uiStore.addElement(_);
+					}
+				},
+			);
 		}),
 	);
 	d.appendChild(

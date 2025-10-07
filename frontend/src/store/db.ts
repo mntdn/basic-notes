@@ -13,6 +13,7 @@ function addNote(text: string) {
 		_id: `${utils.guid()}-${new Date().getHours()}${new Date().getMinutes()}${new Date().getSeconds()}${new Date().getMilliseconds()}`,
 		title: text,
 		content: '',
+		tagList: [],
 		creationDate: new Date(),
 		lastUpdateDate: new Date(),
 	};
@@ -25,10 +26,12 @@ function addNote(text: string) {
 		});
 }
 
-async function updateNote(id: string, content: string) {
-	let doc = await db.get<INote>(id);
+async function updateNote(note: INote) {
+	let doc = await db.get<INote>(note._id);
 
-	doc.content = content;
+	doc.content = note.content;
+	doc.title = note.title;
+	doc.tagList = ['test'];
     doc.lastUpdateDate = new Date();
 	await db.put(doc);
 }
