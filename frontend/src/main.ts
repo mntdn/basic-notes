@@ -6,6 +6,21 @@ import uiStore from './store/ui'
 
 var app = document.querySelector('#app');
 var menu = document.querySelector('#menu');
+
+var showAll = async () => {
+	let n = await dbStore.getAllNotes();
+	console.log("notes", n);
+	n.rows.forEach(
+		(r) => {
+			if(r.doc) {
+				let _ = new Note(r.doc);
+				app?.appendChild(_.getElementHtml());
+				uiStore.addElement(_);
+			}
+		},
+	);
+}
+
 if (menu && app) {
 	let d = menu as HTMLElement;
 
@@ -16,17 +31,7 @@ if (menu && app) {
 	);
 	d.appendChild(
 		utils.createButton('Show', '', async () => {
-			let n = await dbStore.getAllNotes();
-			console.log("notes", n);
-			n.rows.forEach(
-				(r) => {
-					if(r.doc) {
-						let _ = new Note(r.doc);
-						app?.appendChild(_.getElementHtml());
-						uiStore.addElement(_);
-					}
-				},
-			);
+			await showAll();
 		}),
 	);
 	d.appendChild(
@@ -39,4 +44,9 @@ if (menu && app) {
 			uiStore.updateAll();
 		}),
 	);
+}
+
+window.onload = async () => { 
+	console.log("LOAD");
+	await showAll(); 
 }
