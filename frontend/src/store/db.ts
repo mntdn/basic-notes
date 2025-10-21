@@ -2,15 +2,33 @@ import PouchDB from 'pouchdb';
 import configJson from '../config/config.json';
 import { INote } from '../interfaces/INote';
 import utils from '../shared/utils';
+declare function emit(...args: [val: any] | [key: any, value: any]): any;
 
 const db = new PouchDB('notes');
 const remoteDb = new PouchDB(configJson.remoteDbAddress);
+
+const ddoc = {
+  _id: '_design/notes_IDX',
+  views: {
+    all_titles: {
+      map: function (doc: any) { emit(doc.title); }.toString()
+    }
+  }
+};
+// save it
+db.put(ddoc).then(function () {
+  // success!
+  console.log("query saved")
+}).catch(function (err) {
+  // some error (maybe a 409, because it already exists?)
+  console.log("query error", err)
+});
 
 console.log("INIT DB");
 
 function addNote(text: string) {
 	const todo: INote = {
-		_id: `${utils.guid()}-${new Date().getHours()}${new Date().getMinutes()}${new Date().getSeconds()}${new Date().getMilliseconds()}`,
+		_id: new Date().toJSON(),
 		title: text,
 		content: '',
 		tagList: [],
@@ -44,6 +62,11 @@ async function getAllNotes() {
 	return result;
 }
 
+async function getAllTitles() {
+	let result = await db.query('notes_IDX/all_titles');
+	return result;
+}
+
 function sync() {
 	db.replicate
 		.to(remoteDb)
@@ -59,6 +82,7 @@ function sync() {
 const dbStore = {
 	addNote,
 	getAllNotes,
+	getAllTitles,
     updateNote,
 	sync,
 };

@@ -8,6 +8,11 @@ var app = document.querySelector('#app');
 var menu = document.querySelector('#menu');
 
 var showAll = async () => {
+	let titles = await dbStore.getAllTitles();
+	console.log("titles", titles);
+	titles.rows.forEach((t) => {
+		menu?.appendChild(utils.createDiv(t.key, ''))
+	})
 	let n = await dbStore.getAllNotes();
 	console.log("notes", n);
 	n.rows.forEach(
