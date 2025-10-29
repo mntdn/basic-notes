@@ -62,12 +62,28 @@ async function getAllNotes() {
 	return result;
 }
 
+async function getNoteById(id:string) {
+	let result = await db.get<INote>(id);
+	return result;
+}
+
 async function getAllTitles() {
 	let result = await db.query('notes_IDX/all_titles');
 	return result;
 }
 
 function sync() {
+	db.sync(remoteDb)
+		.on('complete', function () {
+			console.log('sync done');
+		})
+		.on('error', function (err) {
+			// boo, something went wrong!
+			console.log('Pb sync', err);
+		});
+}
+
+function sendToServer() {
 	db.replicate
 		.to(remoteDb)
 		.on('complete', function () {
@@ -81,9 +97,11 @@ function sync() {
 
 const dbStore = {
 	addNote,
+	getNoteById,
 	getAllNotes,
 	getAllTitles,
     updateNote,
+	sendToServer,
 	sync,
 };
 

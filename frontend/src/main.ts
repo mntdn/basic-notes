@@ -4,6 +4,7 @@ import './style/main.scss';
 import dbStore from './store/db'
 import uiStore from './store/ui'
 
+var currentNoteId: string|null = null;
 var app = document.querySelector('#app');
 var menu = document.querySelector('#menu');
 
@@ -11,19 +12,17 @@ var showAll = async () => {
 	let titles = await dbStore.getAllTitles();
 	console.log("titles", titles);
 	titles.rows.forEach((t) => {
-		menu?.appendChild(utils.createDiv(t.key, ''))
+		menu?.appendChild(utils.createLink(t.key, `?note=${t.id}`))
+		menu?.appendChild(document.createElement('br'))
 	})
-	let n = await dbStore.getAllNotes();
-	console.log("notes", n);
-	n.rows.forEach(
-		(r) => {
-			if(r.doc) {
-				let _ = new Note(r.doc);
-				app?.appendChild(_.getElementHtml());
-				uiStore.addElement(_);
-			}
-		},
-	);
+	if(currentNoteId){
+		let n = await dbStore.getNoteById(currentNoteId);
+		if(n) {
+			let _ = new Note(n);
+			app?.appendChild(_.getElementHtml());
+			uiStore.addElement(_);
+		}
+	}
 }
 
 if (menu && app) {
@@ -53,5 +52,9 @@ if (menu && app) {
 
 window.onload = async () => { 
 	console.log("LOAD");
-	await showAll(); 
+	const s = /^\?note=(.*)$/.exec(window.location.search);
+	if(s) {
+		currentNoteId = s[1];
+	}
+	await showAll();
 }

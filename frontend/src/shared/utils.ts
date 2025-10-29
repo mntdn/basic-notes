@@ -42,9 +42,17 @@ const createDiv = (content: string, style: string): HTMLDivElement => {
     return div;
 }
 
+const createLink = (text: string, url: string): HTMLAnchorElement => {
+    let a: HTMLAnchorElement = document.createElement('a');
+	a.textContent = text;
+    a.href = url;
+    return a;
+}
+
 const _ = {
     createButton,
     createDiv,
+    createLink,
     getRandomInt,
     guid,
     getBySelector,
