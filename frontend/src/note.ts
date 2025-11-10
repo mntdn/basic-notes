@@ -1,5 +1,5 @@
 import BaseElement from "./classes/baseElement";
-import { INote } from "./interfaces/INote";
+import { INote } from "./interfaces/notes";
 import utils from "./shared/utils";
 import dbStore from './store/db'
 import uiStore from "./store/ui";
@@ -60,6 +60,12 @@ export default class Note extends BaseElement {
             utils.createButton('Delete', '', () => {
                 dbStore.removeNote(this.data);
                 window.location.href = window.location.origin;
+            }),
+        );
+        tmpl.appendChild(
+            utils.createButton('Tets', '', () => {
+                let e:CustomEvent<any> = new CustomEvent('updateEvent', { detail: 1})
+                document.dispatchEvent(e)
             }),
         );
 

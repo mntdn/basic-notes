@@ -7,3 +7,7 @@ export interface INote {
     lastUpdateDate: Date;
 }
 
+export interface ITitle  {
+	_id: string;
+	title: string;
+}

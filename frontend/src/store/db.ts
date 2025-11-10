@@ -1,6 +1,6 @@
 import PouchDB from 'pouchdb';
 import configJson from '../config/config.json';
-import { INote } from '../interfaces/INote';
+import { INote } from '../interfaces/notes';
 import utils from '../shared/utils';
 declare function emit(...args: [val: any] | [key: any, value: any]): any;
 

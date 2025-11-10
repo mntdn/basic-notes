@@ -3,10 +3,18 @@ import utils from './shared/utils';
 import './style/main.scss';
 import dbStore from './store/db'
 import uiStore from './store/ui'
+import { UpdateEventParam } from './interfaces/events';
 
 var currentNoteId: string|null = null;
 var app = document.querySelector('#app');
 var menu = document.querySelector('#menu');
+
+const onCustomEvent = (event: CustomEvent<UpdateEventParam>) => {
+  console.log("EVENT", event);
+//   if(event.detail.elementToUpdate == 'menu')
+}
+
+document.addEventListener('updateEvent', onCustomEvent);
 
 var showAll = async () => {
 	let titles = await dbStore.getAllTitles();
