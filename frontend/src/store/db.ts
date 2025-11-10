@@ -54,6 +54,11 @@ async function updateNote(note: INote) {
 	await db.put(doc);
 }
 
+async function removeNote(note: INote) {
+	let doc = await db.get<INote>(note._id);
+	await db.remove(doc);
+}
+
 async function getAllNotes() {
 	let result = await db.allDocs<INote>({
 		include_docs: true,
@@ -101,6 +106,7 @@ const dbStore = {
 	getAllNotes,
 	getAllTitles,
     updateNote,
+	removeNote,
 	sendToServer,
 	sync,
 };

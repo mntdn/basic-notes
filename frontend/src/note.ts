@@ -2,6 +2,7 @@ import BaseElement from "./classes/baseElement";
 import { INote } from "./interfaces/INote";
 import utils from "./shared/utils";
 import dbStore from './store/db'
+import uiStore from "./store/ui";
 
 export default class Note extends BaseElement {
     data:INote;
@@ -9,7 +10,7 @@ export default class Note extends BaseElement {
     constructor(n: INote) {
         super();
         this.data = n;
-        this.id = `note-${this.data._id}`;
+        this.id = utils.sanitizeId(`note-${this.data._id}`);
         this.className = 'note';
     }
 
@@ -51,7 +52,14 @@ export default class Note extends BaseElement {
                     this.data.title = (textInput as HTMLInputElement).value;
                     dbStore.updateNote(this.data);
                     this.toUpdate = true;
+                    uiStore.updateAll();
                 }
+            }),
+        );
+        tmpl.appendChild(
+            utils.createButton('Delete', '', () => {
+                dbStore.removeNote(this.data);
+                window.location.href = window.location.origin;
             }),
         );
 

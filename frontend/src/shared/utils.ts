@@ -11,6 +11,10 @@ const guid = () => {
     );
 }
 
+const sanitizeId = (id: string):string => {
+    return id.replace(/[:\.]/g, '');
+}
+
 const round = (n: number) => {
     return (Math.round(n * 1000) / 1000);
 }
@@ -55,6 +59,7 @@ const _ = {
     createLink,
     getRandomInt,
     guid,
+    sanitizeId,
     getBySelector,
     round
 }
